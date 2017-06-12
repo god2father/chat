@@ -1,11 +1,12 @@
 /*
-* 好友相关
-*/
+ * 好友相关
+ */
 
 'use strict'
 
 YX.fn.friend = function () {
-     //添加好友
+    //添加好友
+    this.$chart3 = $('.chat-top-bar')
     this.$addFriend = $('#addFriend')
     this.$addFriendBox = $('#addFriendBox')
     this.$chat_zxwt_detail = $('#chat_zxwt_detail')
@@ -15,17 +16,23 @@ YX.fn.friend = function () {
     this.$addFriendBox.delegate('.j-back','click',this.resetSearchFriend.bind(this))
     this.$addFriendBox.delegate('.j-add','click',this.addFriend.bind(this))
     this.$addFriendBox.delegate('.j-blacklist','click',this.rmBlacklist.bind(this))
-    this.$addFriendBox.delegate('.j-chat','click',this.beginChat.bind(this)) 
+    this.$addFriendBox.delegate('.j-chat','click',this.beginChat.bind(this))
     this.$chat_zxwt_detail.delegate('.j-chat','click',this.beginChat1.bind(this))
     this.$addFriendBox.delegate('.j-account','keydown',this.inputAddFriend.bind(this))
+    this.$chart3.delegate('.chat-logo','click',this.beginChat3.bind(this))
 
     //黑名单
-    this.$blacklist = $('#blacklist')  
+    this.$blacklist = $('#blacklist')
     $("#showBlacklist").on('click',this.showBlacklist.bind(this))
     this.$blacklist.delegate('.j-close', 'click', this.hideBlacklist.bind(this))
     this.$blacklist.delegate('.items .j-rm', 'click', this.removeFromBlacklist.bind(this))
     //我的手机
     $("#myPhone").on('click',this.sendToMyPhone.bind(this))
+}
+
+YX.fn.beginChat3 = function(){
+    var toid=readCookie('toId')
+    this.openChatBox(toid,"p2p")
 }
 /**
  * 通讯录列表显示
@@ -44,17 +51,17 @@ YX.fn.buildFriends = function () {
             onclickitem:this.openChatBox.bind(this),
             infoprovider:this.infoProvider.bind(this)
 
-        } 
+        }
         this.friends = new NIMUIKit.FriendList(options)
         this.friends.inject($('#friends').get(0))
     }else{
         this.friends.update(data)
-    }     
+    }
     this.doPoint()
 }
 /**
  * 添加好友相关
- * 
+ *
  */
 YX.fn.showAddFriend = function(){
     this.friendData = null
@@ -71,7 +78,7 @@ YX.fn.searchFriend = function(){
     var account =  $.trim(this.$addFriendBox.find(".j-account").val().toLowerCase())
     if(account!==""){
         this.mysdk.getUser(account,this.cbGetUserInfo.bind(this))
-    }  
+    }
 }
 
 YX.fn.beginChat1 = function(){//从问题面板问题详情的立即沟通
@@ -111,7 +118,7 @@ YX.fn.cbRmBlacklist = function(err,data){
             this.friendData = data
         }
         this.$addFriendBox.removeClass('blacklist')
-        this.$addFriendBox.addClass(isFriend ? "friend" : "noFriend")    
+        this.$addFriendBox.addClass(isFriend ? "friend" : "noFriend")
     }
 }
 YX.fn.inputAddFriend = function(evt){
@@ -129,9 +136,9 @@ YX.fn.cbAddFriend = function(error, params) {
         this.buildFriends()
     }else{
         this.$addFriendBox.find(".tip").html("该帐号不存在，请检查你输入的帐号是否正确")
-        this.$addFriendBox.attr('class',"m-dialog done")          
+        this.$addFriendBox.attr('class',"m-dialog done")
     }
-    
+
 }
 YX.fn.cbGetUserInfo = function(err,data){
     if(err){
@@ -146,7 +153,7 @@ YX.fn.cbGetUserInfo = function(err,data){
         $info.find(".j-username").html("帐号："+ account)
         if(account == userUID){
             this.$addFriendBox.find(".tip").html("别看了就是你自己")
-            this.$addFriendBox.attr('class',"m-dialog done")   
+            this.$addFriendBox.attr('class',"m-dialog done")
         }else{
             var isFriend = this.cache.isFriend(account),
                 inBlacklist = this.cache.inBlacklist(account)
@@ -154,15 +161,15 @@ YX.fn.cbGetUserInfo = function(err,data){
                 this.friendData = data
             }
             if(inBlacklist){
-                 this.$addFriendBox.addClass("blacklist")    
+                this.$addFriendBox.addClass("blacklist")
             }else{
-                this.$addFriendBox.addClass(isFriend?"friend":"noFriend")    
+                this.$addFriendBox.addClass(isFriend?"friend":"noFriend")
             }
         }
-        
+
     }else{
         this.$addFriendBox.find(".tip").html("该帐号不存在，请检查你输入的帐号是否正确")
-        this.$addFriendBox.attr('class',"m-dialog done")      
+        this.$addFriendBox.attr('class',"m-dialog done")
     }
 }
 /************************
@@ -181,10 +188,10 @@ YX.fn.hideBlacklist = function() {
     this.$mask.addClass("hide")
     document.documentElement.style.overflow=''
 },
-YX.fn.removeFromBlacklist = function(evt){
-    var id = $(evt.target).attr("data-id")
-    this.mysdk.markInBlacklist(id,false, this.cbRemoveFromBlacklist.bind(this))
-}
+    YX.fn.removeFromBlacklist = function(evt){
+        var id = $(evt.target).attr("data-id")
+        this.mysdk.markInBlacklist(id,false, this.cbRemoveFromBlacklist.bind(this))
+    }
 YX.fn.cbRemoveFromBlacklist = function (err,data) {
     if(!err){
         this.cache.removeFromBlacklist(data.account)

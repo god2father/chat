@@ -287,18 +287,18 @@ function getMessage(msg) {
                 content1 = JSON.parse(content1);
             }
             if(content.type===1){
-                str = sentStr+'一条[猜拳]消息,请到手机或电脑客户端查看';
+                str = sentStr+'一条[猜拳]消息,请到手机客户端查看';
             }else if(content.type===2){
-                str = sentStr+'一条[阅后即焚]消息,请到手机或电脑客户端查看';
+                str = sentStr+'一条[阅后即焚]消息,请到手机客户端查看';
             }else if(content.type===3){
                 // str = sentStr + 'error'
                 // var catalog = _$escape(content.data.catalog),
                 //     chartlet = _$escape(content.data.chartlet);
                 // str = '<img class="chartlet" onload="loadImg()" src="./images/'+catalog+'/' +chartlet+'.png">';
             }else if(content.type==4){
-                str = sentStr+'一条[白板]消息,请到手机或电脑客户端查看';
+                str = sentStr+'一条[白板]消息,请到手机客户端查看';
             }else if(content1==undefined){//自定义消息错误时
-                str = sentStr+'一条[自定义]消息，请到手机或电脑客户端查看';
+                str = sentStr+'一条[自定义]消息，请到手机客户端查看';
             }else if(content1.type==1){
                     str = '<span class="red-bag">'+content1.money+'<br>元</span>';
             }else if(content1.type==2){
@@ -360,9 +360,19 @@ function getMessage(msg) {
                     str = '已收到对方服务费'
                 }
 
+            }else if(content1.type==17){//收到或发送文件
+                if(content1.toAccid==userUID){
+                    str = '<div class="case-content cursor tc"><img class="w50 fnone" src="images/files.png" alt="" onclick="chatSendFile('+'\''+content1.toAccid+'\')"></div>'+
+                        '<p class="pt5 tr color-blue cursor showcase" onclick="chatSendFile('+'\''+content1.toAccid+'\')"><span class="fl">'+content1.displayname+'</span><span class="fr color-grey">已接收</span></p>'
+                    // console.log('******////*******'+JSON.stringify(content1))
+                }else {
+                    str = '<div class="case-content cursor tc"><img class="w50 fnone" src="images/files.png" alt="" onclick="chatSendFile('+'\''+content1.toAccid+'\')"></div>'+
+                        '<p class="pt5 tr color-blue cursor showcase" onclick="chatSendFile('+'\''+content1.toAccid+'\')"><span class="fl">'+content1.displayname+'</span><span class="fr color-grey">已发送</span></p>'
+                }
+
             }else {
                 // console.log('******////*******'+JSON.stringify(content1))
-                str = sentStr+'一条[自定义]消息，请到手机或电脑客户端查看';
+                str = sentStr+'一条[自定义]消息，请到手机客户端查看';
             }
             break;
         default:
@@ -376,7 +386,7 @@ function showCase(aid) {
     var html=''
     var reply=''
     var token=readCookie('sdktoken')
-    $('#question-loading2').removeClass('hide')
+    $('#question-loading1').removeClass('hide')
     $.ajax({
         url: CONFIG.url+'ask/getInfoByAid',
         type: 'POST',
@@ -400,7 +410,7 @@ function showCase(aid) {
                     case '1':
                         var caseForm ='<div class="chat-question-detail-input"><p><i class="fa fa-edit">&nbsp;我要回答</i></p>' +
                                             '<form ><textarea class="chat-question-detail-input-txt" autofocus="autofocus" id="chatReplyTextarea"></textarea>' +
-                                            '<div class="tr chat-question-send"><span>Ctrl+Enter</span><a class="btn chatreply" onclick="chatReplyTextarea('+aid+','+'\'#chatReplyTextarea\')" id="chatReplyBtn">提交回答</a></div></form>' +
+                                            '<div class="tr chat-question-send"><a class="btn chatreply" onclick="chatReplyTextarea('+aid+','+'\'#chatReplyTextarea\')" id="chatReplyBtn">提交回答</a></div></form>' +
                                         '</div> ';
                         break;
                     case '2':
@@ -412,6 +422,8 @@ function showCase(aid) {
                 }
                 if(data.info.ask.headpic==''){
                     data.info.ask.headpic='images/default-icon.png'
+                }else {
+                    data.info.ask.headpic =  data.info.ask.headpic+'?imageView2/2/w/225/h/170/interlace/0/q/100'
                 }
 
                 //回复详情
@@ -420,6 +432,8 @@ function showCase(aid) {
                 for(i=0;i<data.info.reply.length;i++){
                     if(data.info.reply[i].headpic==''){
                         data.info.reply[i].headpic='images/default-icon.png'
+                    }else {
+                        data.info.reply[i].headpic=data.info.reply[i].headpic+'?imageView2/2/w/225/h/170/interlace/0/q/100'
                     }
                     if(data.info.reply[i].ar_tips=='1'){
                         arTips='<span class="fr color-orange f12">已采纳</span>'
@@ -452,18 +466,21 @@ function showCase(aid) {
                     '<div class="chat-question-detail-avatar-tag">'+MoneyBox+'<span class="chat-tips-hyjt">'+data.info.ask.a_cate+'</span></div></div>' +
                     '<div class="chat-question-detail-txt">'+data.info.ask.a_content+'</div>' +
                     caseForm+reply;
-                     $('#question-loading2').addClass('hide')
+                     $('#question-loading1').addClass('hide')
                         $('#case-box').html(html)
             }else {
                 console.log('个人信息数据请求失败，请重试');
+                $('#question-loading1').addClass('hide')
             }
         },
         error: function() {
             console.log('请求失败，请重试');
+            $('#question-loading1').addClass('hide')
         }
     })
     $('#case-box').addClass('unpop-modal');
     $('#showFeesHtml').removeClass('unpop-modal');
+    $('#sendFile').removeClass('unpop-modal');
     event.stopPropagation();
     $('#case-box').click(function () {
         event.stopPropagation();
@@ -477,6 +494,7 @@ $('#caseBoxClose').click(function () {
 $('body').click(function () {
     $('#case-box').removeClass('unpop-modal');
     $('#showFeesHtml').removeClass('unpop-modal');
+    $('#sendFile').removeClass('unpop-modal');
 })
 
 /**
@@ -866,6 +884,8 @@ function shouFees(toid) {
         success: function(reponse){
             if(reponse.info.headpic==''){
                     reponse.info.headpic='images/default-icon.png'
+            }else {
+                reponse.info.headpic = reponse.info.headpic+'?imageView2/2/w/225/h/170/interlace/0/q/100'
             }
             var shouFeesHtml=''
             shouFeesHtml='<div class="chat-content-left-avatar tc">' +
@@ -889,7 +909,7 @@ function shouFees(toid) {
 }
 //点击查看服务费详情
 function showFee(accid,mlid,money,detail,time) {
-    $('#question-loading2').removeClass('hide')
+    $('#question-loading1').removeClass('hide')
     $.ajax({
         url: CONFIG.url+'user/getInfoByAccid',
         type: 'POST',
@@ -902,6 +922,8 @@ function showFee(accid,mlid,money,detail,time) {
             if(data.state=="success"){
                 if(data.info.headpic==''){
                     data.info.headpic='images/default-icon.png'
+                }else {
+                    data.info.headpic=  data.info.headpic+'?imageView2/2/w/225/h/170/interlace/0/q/100'
                 }
                 if (detail==''||detail==null){
                     detail='服务费'
@@ -922,7 +944,7 @@ function showFee(accid,mlid,money,detail,time) {
                         }
                         var timeYMD = time.substr(0,9)
                         var timeHM = time.substr(10,17)
-                        $('#question-loading2').addClass('hide')
+                        $('#question-loading1').addClass('hide')
                        $('#showFeesAvatar').attr('src',data.info.headpic)
                        $('#showFeesNickname').html(data.info.nickname)
                        $('#showFeesMoney').html(money)
@@ -933,20 +955,24 @@ function showFee(accid,mlid,money,detail,time) {
                        $('#showFeesmlid').html(mlid)
                         $('#showFeesHtml').addClass('unpop-modal')
                         $('#case-box').removeClass('unpop-modal');
+                        $('#sendFile').removeClass('unpop-modal');
                         event.stopPropagation();
                         $('#showFeesHtml').click(function () {
                             event.stopPropagation();
                         })
                     },
                     error: function(){
+                        $('#question-loading1').addClass('hide')
                         console.log('Ajax error!');
                     }
                 });
             }else {
+                $('#question-loading1').addClass('hide')
                 console.log('数据请求失败，请重试');
             }
         },
         error: function() {
+            $('#question-loading1').addClass('hide')
             console.log('数据请求失败，请重试');
         }
     })

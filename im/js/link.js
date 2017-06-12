@@ -19,7 +19,7 @@ var SDKBridge = function (ctr,data) {
 	this.cache = data;
 	window.nim = ctr.nim = this.nim = new SDK.NIM({
 		//控制台日志，上线时应该关掉
-		// debug: true || { api: 'info', style: 'font-size:14px;color:blue;background-color:rgba(0,0,0,0.1)' },
+		debug: true || { api: 'info', style: 'font-size:14px;color:blue;background-color:rgba(0,0,0,0.1)' },
         appKey: CONFIG.appkey,
         account: userUID,
         token: sdktoken,
@@ -65,7 +65,7 @@ var SDKBridge = function (ctr,data) {
         onsyncfriendaction:onSyncFriendAction.bind(this)
     });
 	function onConnect() {
-		$('errorNetwork').addClass('hide');
+		$('#errorNetwork').addClass('hide');
 		this.teamMemberDone = false;
 		this.sysMsgDone = false;
 	    console&&console.log('连接成功');
@@ -78,7 +78,7 @@ var SDKBridge = function (ctr,data) {
 
 	function onWillReconnect(obj){
 		// 此时说明 `SDK` 已经断开连接，请开发者在界面上提示用户连接已断开，而且正在重新建立连接
-		$('errorNetwork').removeClass('hide');
+		$('#errorNetwork').removeClass('hide');
 	};
 
 	function onError(error) {
@@ -87,7 +87,7 @@ var SDKBridge = function (ctr,data) {
 	function onDisconnect(error) {
 		// 此时说明 `SDK` 处于断开状态，开发者此时应该根据错误码提示相应的错误信息，并且跳转到登录页面
 		var that = this;
-		console.log('连接断开');
+		console.log('连接断开'+error.code);
 	    if (error) {
 	        switch (error.code) {
 	        // 账号或者密码错误, 请跳转到登录页面并提示错误

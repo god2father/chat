@@ -115,7 +115,7 @@ function showQuestion(aid) {
                     case '1':
                         var caseForm ='<div class="chat-question-detail-input"><p><i class="fa fa-edit">&nbsp;我要回答</i></p>' +
                             '<form ><textarea class="chat-question-detail-input-txt" autofocus="autofocus" id="questionReplyTextarea"></textarea>' +
-                            '<div class="tr chat-question-send"><span>Ctrl+Enter</span><a class="btn chatreply" onclick="chatReplyQuestion('+aid+','+'\'#questionReplyTextarea\')" id="questionReplyBtn">提交回答</a></div></form>' +
+                            '<div class="tr chat-question-send"><div class="draggable-box" id="draggable-box"><span class="chat-draggable" id="chat-draggable"><i class="fa fa-angle-double-right"></i></span><span class="fr draggable-box-txt">滑动解锁提交按钮</span></div><span>Ctrl+Enter</span><a class="btn chatreply" onclick="chatReplyQuestion('+aid+','+'\'#questionReplyTextarea\')" id="questionReplyBtn" disabled="disabled">提交回答</a></div></form>' +
                             '</div> ';
                         break;
                     case '2':
@@ -127,6 +127,8 @@ function showQuestion(aid) {
                 }
                 if(data.info.ask.headpic==''){
                     data.info.ask.headpic='images/default-icon.png'
+                }else {
+                    data.info.ask.headpic=data.info.ask.headpic+'?imageView2/2/w/225/h/170/interlace/0/q/100'
                 }
 
                 //回复详情
@@ -135,6 +137,8 @@ function showQuestion(aid) {
                 for(i=0;i<data.info.reply.length;i++){
                     if(data.info.reply[i].headpic==''){
                         data.info.reply[i].headpic='images/default-icon.png'
+                    }else {
+                        data.info.reply[i].headpic = data.info.reply[i].headpic+'?imageView2/2/w/225/h/170/interlace/0/q/100'
                     }
                     if(data.info.reply[i].ar_tips=='1'){
                         arTips='<span class="fr color-orange f12">已采纳</span>'
@@ -163,7 +167,7 @@ function showQuestion(aid) {
                     '<div class="chat-question-detail-avatar-title">' +
                     '<p class="chat-question-detail-avatar-title1">'+data.info.ask.nickname+'</p>' +
                     '<p class="chat-question-detail-avatar-title2">'+caseTime+'</p><span class="j-account hide j-username" >'+data.info.ask.accid+'</span>'+
-                    '</div>' +'<span class="ml15 j-chat f12 cursor color-lsrz"><i class="fa fa-comments f20 pt5 pl10 pr5 color-lsrz cursor"></i>立即沟通</span>'+
+                        '</div>' +'<span class="ml15 j-chat f12 cursor color-lsrz"><i class="fa fa-comments f20 pt5 pl10 pr5 color-lsrz cursor"></i>立即沟通</span>'+
                     // '</div>' +'<span class="btn btn-info ml15" onclick="YX.fn.doChat1(\''+data.info.ask.accid+'\',\''+'p2p'+'\')">立即沟通</span>'+
                     '<div class="chat-question-detail-avatar-tag">'+MoneyBox+'<span class="chat-tips-hyjt">'+data.info.ask.a_cate+'</span></div></div>' +
                     '<div class="chat-question-detail-txt">'+data.info.ask.a_content+'</div>' +
@@ -171,12 +175,15 @@ function showQuestion(aid) {
                 $('#question-loading1').addClass('hide')
                 $('#chat_zxwt_detail').html(html)
                 event.stopPropagation()
+                draggableBox()
             }else {
                 console.log('个人信息数据请求失败，请重试');
+                $('#question-loading1').addClass('hide')
             }
         },
         error: function() {
             console.log('请求失败，请重试');
+            $('#question-loading1').addClass('hide')
         }
     })
 }
@@ -244,3 +251,82 @@ $('.chat-question-list-new ul').delegate('li','click',function () {
     // alert($(this.li))
     $(this).addClass('active').siblings().removeClass('active')
 })
+//滑动解锁提交回复
+function draggableBox() {
+    $("#chat-draggable").draggable({
+        axis: 'x',
+        containment: 'parent',
+        drag: function(event, ui) {
+            if (ui.position.left > 150) {
+                $("#draggable-box").fadeOut();
+                $('#questionReplyBtn').removeAttr("disabled");
+            } else {
+                // Apparently Safari isn't allowing partial opacity on text with background clip? Not sure.
+                //$("h2 span").css("opacity", 100 - (ui.position.left / 5))
+            }
+        },
+        stop: function(event, ui) {
+            if (ui.position.left < 149) {
+                $(this).animate({
+                    left: 0
+                })
+            }
+        }
+    });
+}
+//页面加载完毕之后才显示
+document.onreadystatechange = function () {
+    if (document.readyState == "complete") {
+        $('.chat-bg').removeClass('hide')
+        $('#question-loading1').addClass('hide')
+    } else {
+        $('#question-loading1').removeClass('hide')
+    };
+};
+//快捷 回复
+$('#quickReply').click(function () {
+    $('.quick-reply-box').fadeToggle()
+    quickReplyList()
+    event.stopPropagation()
+})
+$('.quick-reply-box').click(function () {
+    event.stopPropagation()
+})
+// $('body').click(function () {
+//     $('.quick-reply-box').fadeOut()
+// })
+$('.quick-reply-box').delegate('li','click',function () {
+    var replayTxt=$(this).text()
+    $('#messageText').val(replayTxt)
+})
+//获取快捷回复列表
+function quickReplyList() {
+    var html=''
+        $.ajax({
+            url:'http://api.chongfa.com/wg/quick/ls',
+            // url: CONFIG.url + 'ask/reply',
+            type: 'POST',
+            data: {
+                'token': token,
+                'app': 'test'
+            },
+            contentType: 'application/x-www-form-urlencoded',
+            success: function (data) {
+                if(data.state=='success'){
+                    if(data.info==''||data.info==null){
+                        html='<p class="tc pt30">无快捷回复</p>'
+                    }else {
+                        for (i=0;i<data.info.length;i++){
+                              html+='<li class="cursor">'+data.info[i].q_text+'</li>'
+                        }
+                    }
+                }else {
+                    html='<p class="tc pt30">无快捷回复</p>'
+                }
+                $('#quickReplyList').html(html)
+            },
+            error: function () {
+                console.log('发送失败，请重试');
+            }
+        })
+}

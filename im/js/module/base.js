@@ -119,6 +119,7 @@ YX.fn.cbInitLocalTeamInfo = function (err, data) {
  * 点击左边面板，打开聊天框
  *********************************/
 YX.fn.openChatBox = function (account, scene) {
+    // account='604bb1e371eb33eb0609425444be193b'
     var info
     // console.log('输出'+account+'and'+scene)
     this.mysdk.setCurrSession(scene,account)
@@ -311,6 +312,8 @@ YX.fn.logoutEvt = function () {
 YX.fn.doLogout = function () {
     delCookie('uid')
     delCookie('sdktoken')
+    delCookie('phone')
+    window.localStorage.removeItem('phone');
     window.location.href = './index.html'
 }
 

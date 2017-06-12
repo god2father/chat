@@ -14,11 +14,13 @@
     <!--<link rel="stylesheet" href="css/main.css"/>-->
     <link rel="stylesheet" href="css/uiKit.css"/>
     <link rel="stylesheet" href="css/CEmojiEngine.css"/>
+    <link rel="stylesheet" href="css/uploadfile.css"/>
     <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
 </head>
 <body>
-<div class="chat-bg">
-    <div class="chat-wrapper">
+<div class="bad-network hide tc radius5px" id="errorNetwork">已与服务器断开，请检查网络连接</div>
+<div class="chat-bg hide">
+    <div class="chat-wrapper position-re">
         <!--聊天界面顶部logo、搜索框-->
         <div class="chat-top-bar">
             <div class="chat-logo">
@@ -105,7 +107,9 @@
                                 <input multiple="multiple" type="file" name="file" id="uploadFile" accept="image/gif,image/jpeg,image/jpg,image/png,image/bmp" class="hide"/>
                             </form>
                             <!--<a class="fa fa-phone" id="exchangePhone" title="交换电话"></a>-->
-                            <a id="shouFees" ><img src="images/zixunfei.png" alt="" title="收取服务费" width="20"></a>
+                            <a id="shouFees" class="pr15"><img src="images/zixunfei.png" alt="" title="收取服务费" width="20"></a>
+                            <a id="upFile" class="fa fa-paperclip"></a>
+                            <a id="quickReply" class="pr10 fr color-quick-reply-icon">快捷回复</a>
 
                             <!--<a class="fa fa-image" id="chooseImage" datatype="file"></a>-->
                         </div>
@@ -130,6 +134,90 @@
                         <p class="pt10 pb10 pl5 pr5 user-border-bottom"><span>转账说明:</span><span class="shoufee-time" id="showFeesDetails"></span></p>
                         <p class="mb15 pt10 pb10 pl5 pr5 user-border-bottom"><span>创建时间:</span><span class="shoufee-time" id="showFeesTime"></span></p>
                         <p class="tc"><a class="color-blue" id="doFeesAgain" >再发一次</a></p>
+                    </div>
+                    <!--发送文件列表-->
+                    <div id="sendFile">
+                        <div class="sendfilebox position-re">
+                            <div class="mobile-upload" id="wrapper">
+                                <div class="mobile-tab">
+                                    <a href="#fileReceive" class="active">我收到的</a>
+                                    <a href="#fileMy" class="no-border-r">我上传的</a>
+                                </div>
+                                <div class="mobile-list-box">
+                                    <!--收到的文件列表-->
+                                    <div class="file-receive" id="fileReceive">
+                                        <div class="mobile-no-file hide" id="noFlileReceiveError">
+                                            <p><img class="mobile-no-file-img" src="images/nofile.png" alt=""></p>
+                                            <p class="mobile-no-file-title">加载出错</p>
+                                            <p class="mobile-no-file-txt"><a href="javascript:;" class="reload">请重试</a></p>
+                                        </div>
+                                        <div class="mobile-no-file hide" id="noFlileReceive">
+                                            <p><img class="mobile-no-file-img" src="images/nofile.png" alt=""></p>
+                                            <p class="mobile-no-file-title">暂无文件</p>
+                                            <p class="mobile-no-file-txt">没有收到的文件</p>
+                                        </div>
+                                        <div class="mobile-file hide" id="fileReceiveBox">
+                                            <div class="mobile-file-top mt10">
+                                                <span class="fl">文件</span>
+                                                <span class="fr">日期</span>
+                                            </div>
+                                            <ul id="mobileFileList">
+
+                                            </ul>
+                                            <p class="tc mt10 mb5"><a href="javascript:;" id="listMore" class="hide"></a></p>
+                                        </div>
+                                    </div>
+                                    <!--上传的文件列表-->
+                                    <div class="file-my hide" id="fileMy">
+                                        <div class="mobile-no-file " id="myNoFileError">
+                                            <p><img class="mobile-no-file-img" src="images/nofile.png" alt=""></p>
+                                            <p class="mobile-no-file-title">加载出错</p>
+                                            <p class="mobile-no-file-txt"><a href="javascript:;" class="reload">请重试</a></p>
+                                        </div>
+                                        <div class="mobile-no-file" id="myNoFile">
+                                            <p><img class="mobile-no-file-img" src="images/nofile.png" alt=""></p>
+                                            <p class="mobile-no-file-title">暂无上传文件</p>
+                                            <p class="mobile-no-file-txt">请登录<a href="#">chongfa.com</a>网页</p>
+                                            <p class="mobile-no-file-txt pt15">上传您要选择的文件</p>
+                                        </div>
+                                        <div class="mobile-file" id="myFileBox">
+                                            <div class="mobile-file-top mt10">
+                                                <span class="fl">文件</span>
+                                                <span class="fr">日期</span>
+                                            </div>
+                                            <ul id="mobileFileListSent">
+
+                                            </ul>
+                                            <p class="tc mt10 mb5"><a href="javascript:;" id="listMore1" class="hide"></a></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--提示下载信息-->
+                            <div class="file-modal-box" id="fileModal1">
+                                <div class="file-modal">
+                                    <p class="cb tc mt50 file-modal-top"><img src="images/icon_warning_all.png" alt=""></p>
+                                    <p class="tc file-modal-mid">请登录网页版崇法进行下载 <br>网址chongfa.com</p>
+                                    <p class="file-modal-close tc file-modal-bottom cursor" id="fileModal1Close1">我知道了</p>
+                                </div>
+                            </div>
+                            <!--提示是否发送信息-->
+                            <div class="file-modal-box" id="fileModal2">
+                                <div class="file-modal">
+                                    <p class="cb tc mt50 file-modal-top"><img src="images/icon_warning_all.png" alt=""></p>
+                                    <p class="tc file-modal-mid" id="fileModal2Txt"></p>
+                                    <p class="file-modal-close tc file-modal-bottom" id="fileModal1Close2">
+                                        <a href="javascript:;" class="btn-cancel-file">取消</a>
+                                        <a href="javascript:;" class="btn-send">发送</a>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--快捷回复栏-->
+                    <div class="quick-reply-box">
+                        <ul id="quickReplyList">
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -157,16 +245,14 @@
                     </div>
                 </div>
                 <!--右侧问题详情-->
-
-                <div class="chat-question-detail-box" id="chat_zxwt_detail">
-
-                </div>
-                <!--加载动画-->
-                <div class="question-loading1 hide" id="question-loading1"><img src="images/loading.gif" alt=""></div>
+                <div class="chat-question-detail-box" id="chat_zxwt_detail"></div>
             </div>
         </div>
+
     </div>
 </div>
+<!--加载动画-->
+<div class="question-loading1 hide" id="question-loading1"><img src="images/loading.gif" alt=""></div>
 <!-- 个人信息 -->
 <div class="m-card m-card-1 hide" id="myInfo">
     <i class="icon icon-close j-close"></i>
@@ -360,19 +446,17 @@
         <button class="  btn-ok j-ok color-fff">确定</button>
     </div>
 </div>
+<!--tips.wav-->
+<audio controls="controls" id="tipsAudio" hidden>
+    <source src="images/tips.wav" />
+    <source src="images/tips.mp3" />
+</audio>
 <script>
     function chat_question_tab() {
         var chat_zxwt=$("#chat_zxwt");
         var chat_tjwt=$("#chat_tjwt");
         var chat_zxwt_detail=$("#chat_zxwt_detail");
         var chat_tjwt_detail=$("#chat_tjwt_detail");
-//        if($(chat_zxwt).hasClass("hide")){
-//            $(chat_zxwt_detail).addClass("hide");
-//            $(chat_tjwt_detail).removeClass("hide");
-//        }else {
-//            $(chat_zxwt_detail).removeClass("hide");
-//            $(chat_tjwt_detail).addClass("hide");
-//        }
     }
     function chat_show(s_id,s_class) {
         $(s_id).children("a").click(function () {
@@ -391,8 +475,9 @@
 
 </script>
 <!-- js-->
-<script src="../3rd/NIM_Web_SDK_v3.2.0.js"></script>
-<script src="../3rd/jquery-1.11.3.min.js"></script>
+<!--<script src="../3rd/NIM_Web_SDK_v3.2.0.js"></script>-->
+<script src="../3rd/NIM_Web_SDK_v3.5.0.js"></script>
+<!--<script src="../3rd/jquery-1.11.3.min.js"></script>-->
 <script src="js/3rd/jquery-ui.min.js"></script>
 <!-- 右键菜单-->
 <!--<script src="js/3rd/contextMenu/jquery.ui.position.js"></script>-->
@@ -416,5 +501,6 @@
 <script src="js/module/notification.js"></script>
 <script src="js/main.js?v=2"></script>
 <script src="js/question.js"></script>
+<script src="js/file.js"></script>
 </body>
 </html>

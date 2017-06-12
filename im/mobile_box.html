@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>聊天界面</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="css/css.css" rel="stylesheet" type="text/css">
+    <link href="../font-awesome-4.7.0/css/font-awesome.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="css/animate.css"/>
+    <link rel="stylesheet" href="css/jquery-ui.css"/>
+    <!--<link rel="stylesheet" href="css/contextMenu/jquery.contextMenu.css"/>-->
+    <!--<link rel="stylesheet" href="css/main.css"/>-->
+    <link rel="stylesheet" href="css/uiKit.css"/>
+    <!--<link rel="stylesheet" href="css/CEmojiEngine.css"/>-->
+    <link rel="stylesheet" href="css/uploadfile.css"/>
+    <link rel="stylesheet" href="css/mobile.css"/>
+    <!--<script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>-->
+</head>
+<body>
+<div class="bad-network hide tc radius5px" id="errorNetwork">已与服务器断开，请检查网络连接</div>
+
+<div class="mobile-container position-re">
+    <!--聊天界面顶部logo、搜索框-->
+    <div class="chat-top-bar  hide">
+        <div class="chat-logo">
+            <img src="images/chat-logo.png" alt="">
+        </div>
+    </div>
+
+    <!--聊天界面主体-->
+    <div class="chat-content wd100">
+        <!--mobile顶栏-->
+        <div class="mobile-top-bar">
+        <div class="position-re mobile-top-bar-box">
+        <div class="mobile-chat-box-title">在线问答</div>
+        <a href="http://chongfa.cn" class="mobile-close"><img src="images/mobile_close.png" alt=""></a>
+        </div>
+        <div class="mobile-banner">
+        <a href="#"><img src="images/mobile_banner.png" alt="" id="mobileBanner"></a>
+        </div>
+        </div>
+
+        <!--聊天tab-->
+        <div class="chat-box-all wd100" id="chat-tab1" style="padding-top: 110px;">
+            <!--最近联系人-->
+            <div class="chat-item hide" id="sessionsWrap" data-type="sessions">
+                <div class="list">
+                    <div class="m-panel">
+                        <div class="panel_item m-sysMsg" id="showNotice">
+                            <div class="panel_avatar">
+                                <img class="panel_image" src="images/notice.png" alt="消息中心"/>
+                            </div>
+                            <div class="panel_text">
+                                <p class="panel_single-row">消息中心</p>
+                            </div>
+                            <b class="count j-sysMsgCount hide"></b>
+                        </div>
+                    </div>
+                    <div id="sessions" class="">
+                        <p>正在获取最近联系人...</p>
+                    </div>
+                </div>
+                <div class="item hide" id="friendsWrap" data-type="friends">
+                    <!-- 通讯录 -->
+                    <div class="list">
+                        <div class="m-panel">
+                        </div>
+                        <div id="friends">
+                            <p>正在获取通讯录...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--會話窗口-->
+            <iframe scrolling="no" frameborder="0" src="mobile.html?token=dbfedcf0ca28de6b357c7a96bd1b9a83&uid=69c1b5855294d90c7a8ce2d2534649cd" name="myframe" width="100%" id="iframeBox" ></iframe>
+        </div>
+
+    </div>
+
+</div>
+<script src="../3rd/jquery-1.11.3.min.js"></script>
+<script>
+    var height=$(window).height()
+    $('#iframeBox').css('height',height-113)
+    //判断设备系统设置下载地址
+    var ua = navigator.userAgent.toLowerCase();
+    var downLoadUrl=''
+    if (ua.match(/MicroMessenger/i)=="micromessenger") {
+        downLoadUrl = "http://www.chongfa.cn/wxapp";
+    } else {
+        if (ua.match(/(iPhone|iPod|iPad);?/i)) {
+            downLoadUrl = "http://www.chongfa.cn/downjump/ios";
+        } else {
+            downLoadUrl = "http://www.chongfa.cn/downjump/android";
+        }
+    }
+    $('#mobileBanner').click(function () {
+        var text='jjjjjjj'
+       myframe.window.getUserkey('69c1b5855294d90c7a8ce2d2534649cd','dbfedcf0ca28de6b357c7a96bd1b9a83','de12f9d7e91de08c6528c0f8caedc565')
+    })
+</script>
+</body>
+</html>

@@ -1,10 +1,10 @@
 /*
-* @Author: 消息逻辑
-*/
+ * @Author: 消息逻辑
+ */
 
 'use strict'
 YX.fn.message = function () {
-	this.$sendBtn = $('#sendBtn')
+    this.$sendBtn = $('#sendBtn')
     this.$messageText = $('#messageText')
     this.$chooseFileBtn = $('#chooseFileBtn')
     this.$fileInput = $('#uploadFile')
@@ -15,8 +15,8 @@ YX.fn.message = function () {
     // this.$chooseImage = $('#chooseImge')
     this.$upFile = $('#upFile')
 
- 	// this.$exchangePhone.on('click', this.deleteLocalSession.bind(this))
- 	// this.$exchangePhone.on('click', this.exchangePhone.bind(this))
+    // this.$exchangePhone.on('click', this.deleteLocalSession.bind(this))
+    // this.$exchangePhone.on('click', this.exchangePhone.bind(this))
 
 
     this.$upFile.on('click', this.chatSndFile.bind(this))
@@ -130,18 +130,18 @@ YX.fn.doMsg = function(msg){
  * emoji模块
  ****************************************************************/
 YX.fn.initEmoji = function () {
-	this.$showEmoji = $('#showEmoji')
-	this.$showEmoji.on('click', this.showEmoji.bind(this))
-	var that = this,
+    this.$showEmoji = $('#showEmoji')
+    this.$showEmoji.on('click', this.showEmoji.bind(this))
+    var that = this,
         emojiConfig = {
-        'emojiList':emojiList,  //普通表情
-        'pinupList':pinupList,  //贴图
-        'width': 500,
-        'height':300,
-        'imgpath':'./images/',
-        'callback':function	(result) {
-            that.cbShowEmoji(result)
-        	}
+            'emojiList':emojiList,  //普通表情
+            'pinupList':pinupList,  //贴图
+            'width': 500,
+            'height':300,
+            'imgpath':'./images/',
+            'callback':function	(result) {
+                that.cbShowEmoji(result)
+            }
         }
     this.$emNode = new CEmojiEngine($('#emojiTag')[0],emojiConfig)
 
@@ -164,10 +164,10 @@ YX.fn.cbShowEmoji = function(result){
                     chartlet:result.category+'0'+ (index>=10?index:'0'+index)
                 }
             }
-           this.mysdk.sendCustomMessage(scene, to, content,this.sendMsgDone.bind(this))
+            this.mysdk.sendCustomMessage(scene, to, content,this.sendMsgDone.bind(this))
         }else{
             // 表情，内容直接加到输入框
-           this.$messageText[0].value=this.$messageText[0].value+result.emoji
+            this.$messageText[0].value=this.$messageText[0].value+result.emoji
         }
     }
 }
@@ -217,7 +217,7 @@ YX.fn.uploadFile = function () {
 //收咨询费*****************************************************************/
 YX.fn.shouFeesSend= function () {
     var that=this,
-    to = this.crtSessionAccount
+        to = this.crtSessionAccount
     var feesMoney =$('#feesMoney');
     var feesReason =$('#feesReason');
     var reg2 = /^\d+(\.\d{2})?$/;
@@ -249,30 +249,30 @@ YX.fn.shouFeesSend= function () {
     });
 }
 //重发服务费请求
- YX.fn.doFeesAgain= function () {//mlid,details,time,money,toAccid
-     var money = $('#showFeesMoney').html()
-     var details = $('#showFeesDetails').html()
-     var time = $('#showFeesTime').html()
-     var mlid = $('#showFeesmlid').html()
+YX.fn.doFeesAgain= function () {//mlid,details,time,money,toAccid
+    var money = $('#showFeesMoney').html()
+    var details = $('#showFeesDetails').html()
+    var time = $('#showFeesTime').html()
+    var mlid = $('#showFeesmlid').html()
 
-     var timeYMD = time.substr(0,9)
-     var timeHM = time.substr(10,17)
-     var that = this,
+    var timeYMD = time.substr(0,9)
+    var timeHM = time.substr(10,17)
+    var that = this,
         scene = this.crtSessionType,
         to = this.crtSessionAccount
-     var content = {
+    var content = {
 
-                    }
+    }
 
-     var custom={
-                "mlid":mlid,
-                "details":details,
-                "time":time,
-                "toAccid":this.crtSessionAccount,
-                "type":"14",
-                "myAccid":userUID,
-                "money":money
-                }
+    var custom={
+        "mlid":mlid,
+        "details":details,
+        "time":time,
+        "toAccid":this.crtSessionAccount,
+        "type":"14",
+        "myAccid":userUID,
+        "money":money
+    }
     this.mysdk.sendCustomMessage(scene, to,content, custom,this.sendMsgDone.bind(this))
 }
 //交换电话*****************************************************************/
@@ -359,41 +359,60 @@ YX.fn.chooseFile = function () {
         alert("您已被禁言，无法发送消息")
         return false
     }
-   this.$fileInput.click()
+    this.$fileInput.click()
 }
 
 YX.fn.sendTextMessage = function () {
-    if(ban==false){
-        alert("您已被禁言，无法发送消息")
-        return false
-    }
-	var scene = this.crtSessionType,
-	    to = this.crtSessionAccount,
-	    text = this.$messageText.val().trim()
-	if ( !! to && !! text) {
-	   if (text.length > 500) {
-	        alert('消息长度最大为500字符')
-	    }else if(text.length===0){
-	        return
-	    } else {
-	        this.mysdk.sendTextMessage(scene, to, text, this.sendMsgDone.bind(this))
-           console.log('sessionid='+this.crtSession)
-	    }
-	}
-}
+    var anid=readCookie('anid')
+    $.ajax({
+        url: 'http://cfm.chongfa.com/message/askNimMessageCount?anid='+anid,
+        type: 'get',
+        data: {},
+        contentType: 'application/x-www-form-urlencoded'
+    });
 
+    var scene = this.crtSessionType,
+        to = this.crtSessionAccount,
+        text = this.$messageText.val().trim()
+    if ( !! to && !! text) {
+        if (text.length > 500) {
+            alert('消息长度最大为500字符')
+        }else if(text.length===0){
+            return
+        } else {
+            this.mysdk.sendTextMessage(scene, to, text, this.sendMsgDone.bind(this))
+            console.log('sessionid='+this.crtSession)
+        }
+    }
+}
+//=====================
+function sendMsg(text) {
+
+    var msg = nim.sendText({
+        scene: 'p2p',
+        to: GetQueryString('toaccid'),
+        text: 'hello',
+        done: sendMsgDone
+    });
+    console.log('正在发送p2p text消息, id=' + msg.idClient);
+    function sendMsgDone(error, msg) {
+        console.log(error);
+        console.log(msg);
+        console.log('发送' + msg.scene + ' ' + msg.type + '消息' + (!error?'成功':'失败') + ', id=' + msg.idClient);
+    }
+}
 /**
-* 发送消息完毕后的回调
-* @param error：消息发送失败的原因
-* @param msg：消息主体，类型分为文本、文件、图片、地理位置、语音、视频、自定义消息，通知等
-*/
+ * 发送消息完毕后的回调
+ * @param error：消息发送失败的原因
+ * @param msg：消息主体，类型分为文本、文件、图片、地理位置、语音、视频、自定义消息，通知等
+ */
 YX.fn.sendMsgDone = function (error, msg) {
     this.cache.addMsgs(msg)
     this.$messageText.val('')
     this.$chatContent.find('.no-msg').remove()
     var msgHtml = appUI.updateChatContentUI(msg,this.cache)
     this.$chatContent.append(msgHtml).scrollTop(99999)
-    $('#uploadForm').get(0).reset()
+    // $('#uploadForm').get(0).reset()
     $('#showFeesHtml').removeClass('unpop-modal');
 }
 
@@ -409,8 +428,8 @@ YX.fn.inputMessage = function (e) {
 }
 // 重发
 YX.fn.doResend = function (evt) {
-	var $node
-	if(evt.target.tagName.toLowerCase() === 'span'){
+    var $node
+    if(evt.target.tagName.toLowerCase() === 'span'){
         $node = $(evt.target)
     } else {
         $node = $(evt.target.parentNode)
@@ -419,9 +438,9 @@ YX.fn.doResend = function (evt) {
     var idClient = $node.data("id")
     var msg = this.cache.findMsg(sessionId, idClient)
     this.mysdk.resendMsg(msg, function(err,data){
-       if(err){
+        if(err){
             alert(err.message||'发送失败')
-       }else{
+        }else{
             this.cache.setMsg(sessionId,idClient,data)
             var msgHtml = appUI.buildChatContentUI(sessionId,this.cache)
             this.$chatContent.html(msgHtml).scrollTop(99999)
@@ -434,11 +453,8 @@ YX.fn.doResend = function (evt) {
  * @return {void}
  *************************************************************/
 YX.fn.getHistoryMsgs = function (scene,account) {
-    alert(scene)
     var id = scene + "-" + account;
-
     var sessions = this.cache.findSession(id)
-
     var msgs = this.cache.getMsgs(id)
     //标记已读回执
     this.sendMsgRead(account, scene)
@@ -450,14 +466,13 @@ YX.fn.getHistoryMsgs = function (scene,account) {
         }
     }
     this.doChatUI(id)
-    alert(id)
 }
 //拿到历史消息后聊天面板UI呈现
 YX.fn.doChatUI = function (id) {
     var temp = appUI.buildChatContentUI(id,this.cache)
     this.$chatContent.html(temp)
     this.$chatContent.scrollTop(9999)
-     //已读回执UI处理
+    //已读回执UI处理
     this.markMsgRead(id)
 }
 
@@ -468,7 +483,7 @@ YX.fn.getLocalMsgsDone = function(err,data){
         var array = getAllAccount(data.msgs)
         var that = this
         this.checkUserInfo(array, function() {
-           that.doChatUI(id)
+            that.doChatUI(id)
         })
     }else{
         alert("获取历史消息失败")
@@ -557,16 +572,16 @@ YX.fn.markMsgRead = function(id){
 
 //播放声音
 function playAudio(tipsAudio) {
-      var playing = false, currentAudio = null;
-      var $audio = $(tipsAudio)
-      if (playing) {
+    var playing = false, currentAudio = null;
+    var $audio = $(tipsAudio)
+    if (playing) {
         playing = false;
         currentAudio.pause();
         currentAudio.currentTime = 0;
         currentAudio = null;
     }
-        playing = true;
-        currentAudio = $audio.get(0);
-        currentAudio.play();
+    playing = true;
+    currentAudio = $audio.get(0);
+    currentAudio.play();
 
 }

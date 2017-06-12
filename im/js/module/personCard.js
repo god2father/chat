@@ -50,8 +50,8 @@ YX.fn.showMyInfo = function () {
                 console.log(data.state)
             }
         },
-        error: function() {
-            console.log('个人信息数据请求失败，请重试');
+        error: function(data) {
+            console.log('个人信息数据请求失败，请重试'+data);
         }
     })
     var $node = this.$myInfo.data({info:user})
@@ -525,7 +525,7 @@ YX.fn.showInfoBox = function(user,type){
                 $('#userQQ').text(data.info.qq ===undefined?"--":data.info.qq||"--")
                 $('#userEmail').text(data.info.email ===undefined?"--":data.info.email||"--")
             }else {
-                console.log('个人信息数据请求失败，请重试');
+                console.log('个人信息数据请求失败，请重试'+JSON.stringify(data));
             }
         },
         error: function() {

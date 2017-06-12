@@ -58,28 +58,31 @@ var Login = {
 		if (account.length === 0) {
 			errorMsg = '帐号不能为空';
 		} else if (!pwd || pwd.length <2) {
-			errorMsg = '密码长度至少6位';
+			errorMsg = '密码长度不正确';
 		} else {
-			that.$loginBtn.html('登录中...').attr('disabled', 'disabled');
+			// that.$loginBtn.html('登录中...').attr('disabled', 'disabled');
 			that.webLogin.call(that,account,pwd);
 			// that.requestLogin.call(that, account, pwd);
-			that.$loginBtn.html('登录').removeAttr('disabled');
+            that.$loginBtn.html('登录').removeAttr('disabled');
 		}
 		that.$errorMsg.html(errorMsg).removeClass('hide');  // 显示错误信息
 		return false;
 	},
 	//网站登录非云信
 		webLogin:function(phone,password){
-			window.localStorage.setItem("phone",phone)//设置手机号码localstorage
+
+			$('#question-loading1').removeClass('hide')
 			var that = this
 			var params = {
 				'phone': phone,
 				'password':password,
+				// 'app':'test',
 				// 'password':MD5(pwd),
 				// 'nickname': nickname
 			};
 		$.ajax({
-		url: CONFIG.url+'user/login',
+
+		url: 'http://api.chongfa.com/wg/user/login',
 		type: 'POST',
 		data: params,
 		contentType: 'application/x-www-form-urlencoded',
@@ -87,32 +90,33 @@ var Login = {
 		// 	req.setRequestHeader('appkey', CONFIG.appkey);
 		// },
 		success: function(data) {
-			if(data.info.usertype!='2'){
-                that.$errorMsg.html('您不是律师用户,请输入律师账号').removeClass('hide');
-                delCookie('uid')
-                delCookie('sdktoken')
-                window.localStorage.setItem("phone",null)
-                return false
-			}
+			console.log(data)
 			var str = JSON.stringify(data);
 			var obj = JSON.parse(str);
 			var token = obj.info.token;
 			var accid = obj.info.accid;
 			var uid = obj.info.uid;
 			var email = obj.info.email;
-            if(obj.state=="success"){
-                // console.log(token +"&"+uid);
+            if(data.state=="success"){
+
 				// 云信登录
                 that.requestLogin.call(that, accid, token,data,email);
-                // alert(token)
+                window.localStorage.setItem('phone',phone)//设置手机号码localstorage
+                setCookie('phone',phone);
+
             }else {
                 that.$errorMsg.html(obj.info);
+                window.localStorage.removeItem('phone');
+                delCookie('phone')
+                delCookie('uid')
+                delCookie('sdktoken')
+                $('#question-loading1').addClass('hide')
             }
 			// that.requestLogin.on(phone,token);
 
 		},
 		error: function(data) {
-			// alert(11)
+
 			that.$errorMsg.html('请求失败，请重试');
 		}
 	})},

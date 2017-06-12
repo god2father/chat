@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <title>聊天界面</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="css/css.css" rel="stylesheet" type="text/css">
+    <link href="../font-awesome-4.7.0/css/font-awesome.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="css/animate.css"/>
+    <link rel="stylesheet" href="css/jquery-ui.css"/>
+    <!--<link rel="stylesheet" href="css/contextMenu/jquery.contextMenu.css"/>-->
+    <!--<link rel="stylesheet" href="css/main.css"/>-->
+    <link rel="stylesheet" href="css/uiKit.css"/>
+    <!--<link rel="stylesheet" href="css/CEmojiEngine.css"/>-->
+    <link rel="stylesheet" href="css/uploadfile.css"/>
+    <link rel="stylesheet" href="css/mobile.css"/>
+    <!--<script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>-->
+</head>
+<body>
+<div class="bad-network hide tc radius5px" id="errorNetwork">已与服务器断开，请检查网络连接</div>
+
+    <div class="mobile-container position-re">
+        <!--聊天界面顶部logo、搜索框-->
+        <div class="chat-top-bar  hide">
+            <div class="chat-logo">
+                <img src="images/chat-logo.png" alt="">
+            </div>
+        </div>
+
+        <!--聊天界面主体-->
+        <div class="chat-content wd100">
+
+
+            <!--聊天tab-->
+            <div class="chat-box-all wd100" id="chat-tab1">
+                <!--最近联系人-->
+                <div class="chat-item hide" id="sessionsWrap" data-type="sessions">
+                    <div class="list">
+                        <div class="m-panel">
+                        <div class="panel_item m-sysMsg" id="showNotice">
+                        <div class="panel_avatar">
+                        <img class="panel_image" src="images/notice.png" alt="消息中心"/>
+                        </div>
+                        <div class="panel_text">
+                        <p class="panel_single-row">消息中心</p>
+                        </div>
+                        <b class="count j-sysMsgCount hide"></b>
+                        </div>
+                        </div>
+                        <div id="sessions" class="">
+                            <p>正在获取最近联系人...</p>
+                        </div>
+                    </div>
+                    <div class="item hide" id="friendsWrap" data-type="friends">
+                        <!-- 通讯录 -->
+                        <div class="list">
+                            <div class="m-panel">
+                            </div>
+                            <div id="friends">
+                                <p>正在获取通讯录...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--會話窗口-->
+                <div class="chat-box position-re overflow-hidden  wd100" id="rightPanel">
+                    <!--加载动画-->
+                    <div class="question-loading2 hide" id="question-loading2"><img src="images/loading.gif" alt=""></div>
+                    <div class="mobile-chat-box-content" id="chatContent"></div>
+                    <div class="mobile-chat-editor" id="chatEditor" data-disabled="1">
+                        <!--表情、图片、语音等-->
+                        <div class="chat-editor-bar hide">
+                            <div id="emojiTag" class="m-emojiTag"></div>
+                            <a class="fa fa-smile-o" id="showEmoji" title="表情"></a>
+                        </div>
+                        <div class="cloud-msg fl" id="cloudMsg"><i class="fa fa-cloud"></i></div>
+                        <div class="mobile-text-input-box wd100">
+                            <textarea class="mobile-text-input" id="messageText"   autofocus="autofocus" maxlength="500"></textarea>
+                        </div>
+                        <a class="mobile-text-input-btn" id="sendBtn"></a>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+<!--加载动画-->
+<div class="question-loading1 hide" id="question-loading1"><img src="images/loading.gif" alt=""></div>
+<!-- 云记录 -->
+<div class="cloud-msg-container hide" id="cloudMsgContainer"></div>
+<div id="mask" class="mask hide"></div>
+<!-- 退出确认框 -->
+<div class="dialog radius5px hide" id="logoutDialog">
+    <span class="icon icon-close j-close"></span>
+    <div class="content tc">确定要退出崇法网页版吗？</div>
+    <div class="buttons tc">
+        <button class=" btn-cancel j-close">取消</button>
+        <button class="  btn-ok j-ok color-fff">确定</button>
+    </div>
+</div>
+<!--tips.wav-->
+<audio controls="controls" id="tipsAudio" hidden>
+    <source src="images/tips.wav" />
+    <source src="images/tips.mp3" />
+</audio>
+
+<!-- js-->
+<!--<script src="../3rd/NIM_Web_SDK_v3.2.0.js"></script>-->
+<script src="../3rd/NIM_Web_SDK_v3.5.0.js"></script>
+<script src="../3rd/jquery-1.11.3.min.js"></script>
+<script src="js/3rd/jquery-ui.min.js"></script>
+<!-- 右键菜单-->
+<!--<script src="js/3rd/contextMenu/jquery.ui.position.js"></script>-->
+<!--<script src="js/3rd/contextMenu/jquery.contextMenu.js"></script>-->
+
+<script src="js/config.js"></script>
+<script src="js/emoji.js"></script>
+<script src="js/util.js?v=2"></script>
+<script src="js/cache.js?v=2"></script>
+<script src="js/mobile_link.js"></script>
+<script src="js/ui.js?v=2"></script>
+<script src="js/widget/uiKit.js?v=2"></script>
+<script src="js/module/base.js"></script>
+<script src="js/module/mobile_message.js"></script>
+<script src="js/module/sysMsg.js"></script>
+<script src="js/module/personCard.js"></script>
+<script src="js/module/session.js"></script>
+<script src="js/module/mobile_friend.js"></script>
+<script src="js/module/team.js"></script>
+<script src="js/module/mobile_cloudMsg.js"></script>
+<script src="js/module/notification.js"></script>
+<script src="js/main.js?v=2"></script>
+<script>
+    var height=$(window).height()
+    $('.mobile-chat-box-content').css('height',height-53)
+
+
+function getMsgText(text) {
+    $('#messageText').val(text)
+}
+</script>
+</body>
+</html>
